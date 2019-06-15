@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using InterviewTestPagination.Common;
+using System.Collections.Generic;
 
 namespace InterviewTestPagination.Models {
     /// <summary>
@@ -18,6 +19,6 @@ namespace InterviewTestPagination.Models {
         /// Example signature of a method that lists entries of model T
         /// </summary>
         /// <returns></returns>
-        IEnumerable<T> List(/* parameters */);
+        PaginatedResult<IEnumerable<T>> List(PaginatedRequest request);
     }
 }

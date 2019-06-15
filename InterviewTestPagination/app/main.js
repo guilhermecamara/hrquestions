@@ -20,17 +20,66 @@
             restrict: "E", // example setup as an element only
             templateUrl: "app/templates/todo.list.paginated.html",
             scope: {}, // example empty isolate scope
-            controller: ["$scope", "$http", controller],
-            link: link
+            controller: ["$scope", "$http", controller]
         };
 
         function controller($scope, $http) { // example controller creating the scope bindings
             $scope.todos = [];
-            // example of xhr call to the server's 'RESTful' api
-            $http.get("api/Todo/Todos").then(response => $scope.todos = response.data);
-        }
+            $scope.currentPage = 1;
+            $scope.showLoading = false;
+            $scope.orderBy = null;
+            $scope.reverse = false;
 
-        function link(scope, element, attrs) { }
+            $scope.onCurrentPageChange = function () {
+                $scope.getData();
+            }
+
+            $scope.onOrderByChange = function (column) {
+                
+                if (column == $scope.orderBy) {
+                    $scope.reverse = !$scope.reverse;
+                } else {
+                    $scope.orderBy = column;
+                    $scope.reverse = false;
+                }
+
+                if ($scope.currentPage == 1)
+                    $scope.getData();
+
+                $scope.currentPage = 1;
+            }
+
+            $scope.getData = function () {
+                $scope.showLoading = true;
+
+                var options = {
+                    numPerPage: $scope.numPerPage,
+                    currentPage: $scope.currentPage,
+                    orderBy: $scope.orderBy,
+                    reverse: $scope.reverse
+                }
+
+                $http({
+                    url: "api/Todo/Todos",
+                    method: "POST",
+                    data: options
+                }).then(function (response) {
+                    var result = response.data
+                    $scope.todos = result.data;
+                    $scope.totalPages = result.totalPages;
+                    $scope.totalItems = result.totalItems;
+
+                    $scope.showLoading = false;
+                });
+            }
+
+            $scope.$watch('numPerPage', function (newValue, oldValue) {
+                if (oldValue && newValue != oldValue) {
+                    $scope.currentPage = 1;
+                    $scope.onCurrentPageChange();
+                }                
+            });
+        }        
 
         return directive;
     }
@@ -47,16 +96,27 @@
      */
     function pagination() {
         var directive = {
-            restrict: "E", // example setup as an element only
+            restrict: "E",
             templateUrl: "app/templates/pagination.html",
-            scope: {}, // example empty isolate scope
-            controller: ["$scope", controller],
-            link: link
+            link: link,
+            transclude: true
         };
 
-        function controller($scope) { }
+        function link(scope, element, attrs) {
+            scope.numPerPage = "20";
 
-        function link(scope, element, attrs) { }
+            scope.setPage = function (page) {
+                scope.currentPage = page;
+            }
+
+            scope.$watch("currentPage", function () {                
+                if (!scope.currentPage || scope.currentPage > scope.totalPages)
+                    scope.currentPage = scope.totalPages;
+
+                if (scope.onCurrentPageChange)
+                    scope.onCurrentPageChange();
+            });
+        }
 
         return directive;
     }

@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Web.Http;
+using InterviewTestPagination.Common;
 using InterviewTestPagination.Models;
 using InterviewTestPagination.Models.Todo;
 
-namespace InterviewTestPagination.Controllers {
+namespace InterviewTestPagination.Controllers {    
+
     /// <summary>
     /// 'Rest' controller for the <see cref="Todo"/>
     /// model.
@@ -13,12 +15,18 @@ namespace InterviewTestPagination.Controllers {
     public class TodoController : ApiController {
 
         // TODO: [low priority] setup DI 
-        private readonly IModelService<Todo> _todoService = new TodoService();
+        private IModelService<Todo> _todoService;
 
-        [HttpGet]
-        public IEnumerable<Todo> Todos(/* parameters  */) {
-            return _todoService.Repository.All();
+        public TodoController(IModelService<Todo> todoService) {
+            this._todoService = todoService;
         }
 
+        [HttpPost]
+        public PaginatedResult<IEnumerable<Todo>> Todos([FromBody] PaginatedRequest request) {            
+
+            var result = _todoService.List(request);
+
+            return result;            
+        }
     }
 }

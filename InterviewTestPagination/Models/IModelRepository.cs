@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace InterviewTestPagination.Models {
 
@@ -9,9 +10,15 @@ namespace InterviewTestPagination.Models {
     /// <typeparam name="T"></typeparam>
     public interface IModelRepository<T> {
         /// <summary>
+        /// Returns the total number of T records
+        /// </summary>
+        /// <returns></returns>
+        int Count();
+
+        /// <summary>
         /// Example of method signature: lists all entries of type T
         /// </summary>
         /// <returns></returns>
-        IEnumerable<T> All();
+        IQueryable<T> All();
     }
 }

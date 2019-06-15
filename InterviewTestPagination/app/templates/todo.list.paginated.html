@@ -1,5 +1,5 @@
 ﻿<!-- table of contents -->
-<table>
+<table ng-hide="showLoading">
     <!-- table:header -->
     <tr>
         <!--
@@ -21,17 +21,17 @@
             . the indicators don't need to look pretty, they just have to be distinct (ascending from descending) and communicate well what they're doing
 
         -->
-        <th>Id </th>
-        <th>Task </th>
-        <th>Created Date </th>
+        <th ng-click="onOrderByChange('Id')">Id <span ng-show="orderBy=='Id'">{{reverse ? '&uarr;' : '&darr;'}}</span></th>
+        <th ng-click="onOrderByChange('Task')">Task <span ng-show="orderBy=='Task'">{{reverse ? '&uarr;' : '&darr;'}}</span></th>
+        <th ng-click="onOrderByChange('CreatedDate')">Created Date <span ng-show="orderBy=='CreatedDate'">{{reverse ? '&uarr;' : '&darr;'}}</span></th>
     </tr>
-    
+
     <!-- table:body -->
     <!--
 
     When the list is still loading (first load or any request made to server to fetch a page):
     - A loading indicator should be displayed instead of the table body to indicate it
-    - It can be any kind of indicator (text, icon, img, etc). 
+    - It can be any kind of indicator (text, icon, img, etc).
     - Dont worry about styling (looking pretty, centralized, etc) it just has to show that the app is still active while the request is being made
 
     -->
@@ -41,6 +41,6 @@
         <td>{{todo.createdDate | date:'MM/dd/yyyy' }}</td>
     </tr>
 </table>
-
+{{teste}}
 <!-- pagination component -->
 <pagination></pagination>
